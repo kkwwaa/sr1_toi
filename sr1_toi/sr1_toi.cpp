@@ -11,11 +11,28 @@ struct Student {
 	string name;
 	int grade;
 
+	void input() {
+		cout << "Введите ID студента: ";
+		cin >> id;
+
+		cout << "Введите ФИО: ";
+		cin >> name;
+
+		cout << "Введите оценку: ";
+		cin >> grade;
+	}
+
 	void print() {
 		cout << "ID: " << id
 			<< " Name: " << name
 			<< " Grade: " << grade << endl;
 	}
+};
+Student students[MAX_STUDENTS] = {
+	{1,"Ave", 2},
+	{2,"Bib", 3},
+	{3,"Cid", 1},
+	{4,"Azi", 0}
 };
 
 struct IndexArray {
@@ -35,20 +52,25 @@ struct IndexArray {
 			cout << arr[i] << ' ';
 	}
 
-	void sortByIndex(Student students[]) {
-		for (int i = 0; i < size; ++i) {
-			for (int j = i + 1; j < size; ++j) {
-				if (students[arr[i]].id > students[arr[j]].id) {
-					// Меняем местами индексы в nameIndex
-					int temp = arr[i];
-					arr[i] = arr[j];
-					arr[j] = temp;
-				}
-			}
+	void addIndex() {
+		int* newArr = new int[size+1];
+		int i = 0;
+		while (i < size && students[arr[i]].id < students[size].id) {
+			newArr[i] = arr[i];
+			i++;
 		}
+		newArr[i] = size;
+		while (i < studentsNumber) {
+			newArr[i + 1] = arr[i];
+			i++;
+		}
+
+		delete[] arr;
+		arr = newArr;
+		size = studentsNumber;
 	}
 
-	void printStudents(Student students[]) {
+	void printStudents() {
 		for (int i = 0; i < studentsNumber; i++) {
 			students[arr[i]].print();
 		}
@@ -56,52 +78,58 @@ struct IndexArray {
 
 	~IndexArray() { delete[] arr; }
 };
+IndexArray inds(studentsNumber);
 
-void inputStudent(Student students[]) {
-	Student newStudent;
-
-	cout << "Введите ID студента: ";
-	cin >> newStudent.id;
-
-	cout << "Введите ФИО: ";
-	cin >> newStudent.name;
-
-	cout << "Введите оценку: ";
-	cin >> newStudent.grade;
-
-	students[studentsNumber]=newStudent;
-	studentsNumber++;
-}
-
-void printStudent(const Student& student) {
-	cout << "ID: " << student.id << "	Name: " << student.name << "	Grade: " << "" << student.grade << "\n";
-}
-
-void printStudents(Student students[]) {
+void printStudents() {
 	for (int i = 0; i < studentsNumber; i++) {
-		printStudent(students[i]);
+		students[i].print();
 	}
 }
 
-
+void addStudents() {
+	int number = 0;
+	cout << "Введите количество студентов для добавления: ";
+	cin >> number;
+	for (int i = 0; i < number; i++) {
+		students[studentsNumber].input();
+		studentsNumber++;
+		inds.addIndex();
+	}
+}
 
 int main()
 {
-
 	setlocale(LC_ALL, "Russian");
 
-	Student students[MAX_STUDENTS] = {
-		{1,"Ave", 2},
-		{2,"Bib", 3},
-		{3,"Cid", 1},
-		{4,"Azi", 0}
-	};
-	
-	IndexArray inds(studentsNumber);
-	inds.print();
-	inds.sortByIndex(students);
-	inds.printStudents(students);
+	bool exit = false;
+	int choice = 0;
 
+	while (!exit) {
+		cout<<"Главное меню:\n";
+		cout << "1. Добавить студентов\n";
+		cout << "2. Вывести список студентов\n";
+		cout << "3. Список студентов по возрастанию ID\n";
+		cin >> choice;
+
+		switch (choice) {
+		case 1:
+			addStudents();
+			break;
+		case 2:
+			printStudents();
+			break;
+		case 3:
+			inds.printStudents();
+			break;
+		case 4:
+			exit = true;
+			break;
+		default:
+			cout << "Неправильный ввод. Попробуйте еще)\n";
+			break;
+		}
+	}
+	
 	//inds.sortByIndex();
 	//inds.printStudents();
 
