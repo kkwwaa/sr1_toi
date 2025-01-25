@@ -6,7 +6,17 @@ using namespace std;
 const int MAX_STUDENTS = 100;
 int studentsNumber = 4;
 
+struct Student {
+	int id;
+	string name;
+	int grade;
 
+	void print() {
+		cout << "ID: " << id
+			<< " Name: " << name
+			<< " Grade: " << grade << endl;
+	}
+};
 
 struct IndexArray {
 	int* arr;
@@ -26,9 +36,9 @@ struct IndexArray {
 	}
 
 	void sortByIndex(Student students[]) {
-		for (int i = 0; i < studentsNumber; ++i) {
-			for (int j = i + 1; j < studentsNumber; ++j) {
-				if (students[arr[i]].id < students[arr[j]].id) {
+		for (int i = 0; i < size; ++i) {
+			for (int j = i + 1; j < size; ++j) {
+				if (students[arr[i]].id > students[arr[j]].id) {
 					// Меняем местами индексы в nameIndex
 					int temp = arr[i];
 					arr[i] = arr[j];
@@ -45,18 +55,6 @@ struct IndexArray {
 	}
 
 	~IndexArray() { delete[] arr; }
-};
-
-struct Student {
-	int id;
-	string name;
-	int grade;
-
-	void print() {
-		cout << "ID: " << id
-			<< " Name: " << name
-			<< " Grade: " << grade << endl;
-	}
 };
 
 void inputStudent(Student students[]) {
@@ -101,8 +99,8 @@ int main()
 	
 	IndexArray inds(studentsNumber);
 	inds.print();
-	/*inds.sortByIndex(students);
-	inds.printStudents(students);*/
+	inds.sortByIndex(students);
+	inds.printStudents(students);
 
 	//inds.sortByIndex();
 	//inds.printStudents();
