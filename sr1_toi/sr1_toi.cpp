@@ -54,8 +54,8 @@ struct Student {
 	}
 };
 Student students[MAX_STUDENTS] = {
-	{1,"Ave", 2},
-	{2,"Bib", 3},
+	{2,"Ave", 2},
+	{1,"Bib", 3},
 	{3,"Cid", 1},
 	{4,"Azi", 0}
 };
@@ -70,6 +70,7 @@ struct IndexArray {
 		for (int i = 0; i < size; i++) {
 			arr[i] = i;
 		}
+		sortByIndex();
 	}
 
 	void print() {
@@ -117,6 +118,19 @@ struct IndexArray {
 	void printStudents() {
 		for (int i = 0; i < studentsNumber; i++) {
 			students[arr[i]].print();
+		}
+	}
+
+	void sortByIndex() {
+		for (int i = 0; i < studentsNumber; ++i) {
+			for (int j = i + 1; j < studentsNumber; ++j) {
+				if (students[arr[i]].id > students[arr[j]].id) {
+					// Меняем местами индексы в nameIndex
+					int temp = arr[i];
+					arr[i] = arr[j];
+					arr[j] = temp;
+				}
+			}
 		}
 	}
 
@@ -173,10 +187,6 @@ void deleteStudent(int key) {
 	}
 }
 
-void edit() {
-
-}
-
 int main()
 {
 	setlocale(LC_ALL, "Russian");
@@ -212,7 +222,8 @@ int main()
 				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
-
+					students[inds.arr[key]].edit();
+					inds.sortByIndex();
 				}
 				else {
 					deleteStudent(inds.arr[key]);
