@@ -47,7 +47,7 @@ struct IndexArray {
 		}
 	}
 
-	void print() const {
+	void print() {
 		for (int i = 0; i < size; i++)
 			cout << arr[i] << ' ';
 	}
@@ -68,6 +68,25 @@ struct IndexArray {
 		delete[] arr;
 		arr = newArr;
 		size = studentsNumber;
+	}
+
+	void deleteIndex(int key) {
+		size--;
+		int* newArr = new int[size];
+		int i = 0;
+		while (i < key) {
+			if (arr[i] > arr[key]) newArr[i] = arr[i] - 1;
+			else newArr[i] = arr[i];
+			i++;
+		}
+		while (i < size) {
+			if (arr[i+1] > arr[key]) newArr[i] = arr[i+1] - 1;
+			else newArr[i] = arr[i];
+			i++;
+		}
+
+		delete[] arr;
+		arr = newArr;
 	}
 
 	void printStudents() {
@@ -97,6 +116,37 @@ void addStudents() {
 	}
 }
 
+void binarySearchByIDRecursive(int& key, int left, int right) {
+	int mid = left + (right - left) / 2;
+	if (mid>=studentsNumber || left>right) {
+		key = -1;
+		cout << "\nСтудент не найден\n";
+		return;
+	}
+	int studentIndex = inds.arr[mid];
+
+	if (students[studentIndex].id == key) {
+		students[studentIndex].print();
+		key = mid;
+		return;
+	}
+	if (students[studentIndex].id < key) {
+		binarySearchByIDRecursive(key, mid + 1, right);
+	}
+	else {
+		binarySearchByIDRecursive(key, left, mid - 1);
+	}
+}
+
+void deleteStudent(int key) {
+	int i = key;
+	studentsNumber--;
+
+	while (i < studentsNumber) {
+		students[i] = students[i+1];
+		i++;
+	}
+}
 int main()
 {
 	setlocale(LC_ALL, "Russian");
@@ -109,6 +159,7 @@ int main()
 		cout << "1. Добавить студентов\n";
 		cout << "2. Вывести список студентов\n";
 		cout << "3. Список студентов по возрастанию ID\n";
+		cout << "4. Поиск студента по ID\n";
 		cin >> choice;
 
 		switch (choice) {
@@ -122,6 +173,24 @@ int main()
 			inds.printStudents();
 			break;
 		case 4:
+			int key;
+			cout << "Введите ID студента: ";
+			cin >> key;
+			binarySearchByIDRecursive(key, 0, studentsNumber);
+			if (key > -1) {
+				int subchoice = 0;
+				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
+				cin >> subchoice;
+				if (subchoice == 1) {
+
+				}
+				else {
+					deleteStudent(inds.arr[key]);
+					inds.deleteIndex(key);
+				}
+			}
+			break;
+		case 5:
 			exit = true;
 			break;
 		default:
