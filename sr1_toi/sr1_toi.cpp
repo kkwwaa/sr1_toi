@@ -27,6 +27,31 @@ struct Student {
 			<< " Name: " << name
 			<< " Grade: " << grade << endl;
 	}
+
+	void edit() {
+		string newName;
+		int newGrade;
+		int newId;
+
+		cout << "¬ведите ID студента (или -1, чтобы оставить): ";
+		cin >> newId;
+		if (newId != -1) {
+			id = newId;
+		}
+
+		cout << "¬ведите ‘»ќ (или enter, чтобы оставить): ";
+		cin.ignore();
+		getline(cin, newName);
+		if (!newName.empty()) {
+			name = newName;
+		}
+
+		cout << "¬ведите оценку (или -1, чтобы оставить): ";
+		cin >> newGrade;
+		if (newGrade != -1) {
+			grade = newGrade;
+		}
+	}
 };
 Student students[MAX_STUDENTS] = {
 	{1,"Ave", 2},
@@ -147,6 +172,11 @@ void deleteStudent(int key) {
 		i++;
 	}
 }
+
+void edit() {
+
+}
+
 int main()
 {
 	setlocale(LC_ALL, "Russian");
