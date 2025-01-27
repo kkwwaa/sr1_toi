@@ -5,6 +5,7 @@ using namespace std;
 
 const int MAX_STUDENTS = 100;
 int studentsNumber = 4;
+bool sortById = true;
 
 struct Student {
 	int id;
@@ -52,11 +53,21 @@ struct Student {
 			grade = newGrade;
 		}
 	}
+
+	// Оператор сравнения
+	bool operator<(const Student& other) const {
+		if (sortById) {
+			return id < other.id; // Сравнение по id
+		}
+		else {
+			return name > other.name; // Сравнение по name (по убыванию)
+		}
+	}
 };
 Student students[MAX_STUDENTS] = {
-	{2,"Ave", 2},
-	{1,"Bib", 3},
-	{3,"Cid", 1},
+	{3,"Ave", 2},
+	{2,"Bib", 3},
+	{1,"Cid", 1},
 	{4,"Azi", 0}
 };
 
@@ -81,7 +92,7 @@ struct IndexArray {
 	void addIndex() {
 		int* newArr = new int[size+1];
 		int i = 0;
-		while (i < size && students[arr[i]].id < students[size].id) {
+		while (i < size && students[arr[i]] < students[size]) {
 			newArr[i] = arr[i];
 			i++;
 		}
@@ -97,17 +108,21 @@ struct IndexArray {
 	}
 
 	void deleteIndex(int key) {
-		size--;
+		size=studentsNumber;
 		int* newArr = new int[size];
 		int i = 0;
+
 		while (i < key) {
-			if (arr[i] > arr[key]) newArr[i] = arr[i] - 1;
-			else newArr[i] = arr[i];
+			if (arr[i] < arr[key]) newArr[i] = arr[i];
+			else newArr[i] = arr[i] - 1;
 			i++;
 		}
 		while (i < size) {
-			if (arr[i+1] > arr[key]) newArr[i] = arr[i+1] - 1;
-			else newArr[i] = arr[i];
+			if (arr[i] < arr[key]) newArr[i] = arr[i + 1];
+			else {
+				if (arr[i + 1] < arr[key]) newArr[i] = arr[i + 1];
+				else newArr[i] = arr[i + 1] - 1;
+			}
 			i++;
 		}
 
@@ -124,7 +139,7 @@ struct IndexArray {
 	void sortByIndex() {
 		for (int i = 0; i < studentsNumber; ++i) {
 			for (int j = i + 1; j < studentsNumber; ++j) {
-				if (students[arr[i]].id > students[arr[j]].id) {
+				if (students[arr[j]] < students[arr[i]]) {
 					// Меняем местами индексы в nameIndex
 					int temp = arr[i];
 					arr[i] = arr[j];
@@ -156,8 +171,13 @@ void addStudents() {
 }
 
 void binarySearchByIDRecursive(int& key, int left, int right) {
-	int mid = left + (right - left) / 2;
-	if (mid>=studentsNumber || left>right) {
+	int mid = left + right / 2;
+	if (left>right) {
+		if (students[studentsNumber-1].id == key) {//проверка последнего
+			key = studentsNumber-1;
+			cout << endl << key << endl;
+			return;
+		}
 		key = -1;
 		cout << "\nСтудент не найден\n";
 		return;
@@ -167,6 +187,7 @@ void binarySearchByIDRecursive(int& key, int left, int right) {
 	if (students[studentIndex].id == key) {
 		students[studentIndex].print();
 		key = mid;
+		cout << endl << key << endl;
 		return;
 	}
 	if (students[studentIndex].id < key) {
@@ -180,12 +201,15 @@ void binarySearchByIDRecursive(int& key, int left, int right) {
 void deleteStudent(int key) {
 	int i = key;
 	studentsNumber--;
-
 	while (i < studentsNumber) {
 		students[i] = students[i+1];
 		i++;
 	}
+
+	for (int i = 0; i < studentsNumber; i++) cout << students[i].id << ' ';
 }
+
+
 
 int main()
 {
