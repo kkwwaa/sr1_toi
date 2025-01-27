@@ -130,6 +130,29 @@ struct IndexArray {
 		arr = newArr;
 	}
 
+	void edit(int key) {
+		int* newArr = new int[size];
+		int i = 0;
+
+		while (students[arr[i]] < students[arr[key]] && i<size) {
+			newArr[i] = arr[i];
+			i++;
+		}
+		i++;
+		while (students[arr[i]] < students[arr[key]] && i < size) {
+			newArr[i - 1] = arr[i];
+			i++;
+		}
+		newArr[i - 1] = arr[key];
+		while (i < size) {
+			newArr[i] = arr[i];
+			i++;
+		}
+
+		delete[] arr;
+		arr = newArr;
+	}
+
 	void printStudents() {
 		for (int i = 0; i < studentsNumber; i++) {
 			students[arr[i]].print();
@@ -237,6 +260,10 @@ int main()
 			inds.printStudents();
 			break;
 		case 4:
+			if (studentsNumber == 0) {
+				cout << "В списке нет студентов: ";
+				break;
+			}
 			int key;
 			cout << "Введите ID студента: ";
 			cin >> key;
@@ -251,7 +278,7 @@ int main()
 				}
 				else {
 					deleteStudent(inds.arr[key]);
-					inds.deleteIndex(key);
+					inds.edit(key);
 				}
 			}
 			break;
