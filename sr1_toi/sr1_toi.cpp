@@ -91,6 +91,10 @@ struct IndexArray {
 	}
 
 	void addIndex() {
+
+		/*cout << endl;
+		for (int i = 0; i < size; i++) cout << arr[i] << ' ';*/
+
 		int* newArr = new int[size+1];
 		int i = 0;
 		while (i < size && students[arr[i]] < students[size]) {
@@ -135,12 +139,12 @@ struct IndexArray {
 		int* newArr = new int[size];
 		int i = 0;
 
-		while (students[arr[i]] < students[arr[key]] && i<size) {
+		while (i < size && students[arr[i]] < students[arr[key]] ) {
 			newArr[i] = arr[i];
 			i++;
 		}
 		i++;
-		while (students[arr[i]] < students[arr[key]] && i < size) {
+		while (i < size && students[arr[i]] < students[arr[key]]) {
 			newArr[i - 1] = arr[i];
 			i++;
 		}
@@ -191,7 +195,10 @@ void addStudents() {
 	for (int i = 0; i < number; i++) {
 		students[studentsNumber].input();
 		studentsNumber++;
+		sortById = true;
 		indexID.addIndex();
+		sortById = false;
+		indexName.addIndex();
 	}
 }
 
@@ -230,8 +237,6 @@ void deleteStudent(int key) {
 		students[i] = students[i+1];
 		i++;
 	}
-
-	for (int i = 0; i < studentsNumber; i++) cout << students[i].id << ' ';
 }
 
 
@@ -283,11 +288,11 @@ int main()
 				cin >> subchoice;
 				if (subchoice == 1) {
 					students[indexID.arr[key]].edit();
-					indexID.sortByIndex();
+					indexID.edit(key);
 				}
 				else {
 					deleteStudent(indexID.arr[key]);
-					indexID.edit(key);
+					indexID.deleteIndex(key);
 				}
 			}
 			break;
@@ -300,12 +305,7 @@ int main()
 		}
 	}
 	
-	//inds.sortByIndex();
-	//inds.printStudents();
-
-	//printStudents(students);
-	//inputStudent(students);
-	//printStudents(students);
+	//Бин поиск для нэйм, ред-ие и удал-ие
 
 	
 }
