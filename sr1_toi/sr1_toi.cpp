@@ -82,6 +82,7 @@ struct IndexArray {
 			arr[i] = i;
 		}
 		sortByIndex();
+		sortById = !sortById;//для создания индФИО
 	}
 
 	void print() {
@@ -174,7 +175,8 @@ struct IndexArray {
 
 	~IndexArray() { delete[] arr; }
 };
-IndexArray inds(studentsNumber);
+IndexArray indexID(studentsNumber);
+IndexArray indexName(studentsNumber);
 
 void printStudents() {
 	for (int i = 0; i < studentsNumber; i++) {
@@ -189,7 +191,7 @@ void addStudents() {
 	for (int i = 0; i < number; i++) {
 		students[studentsNumber].input();
 		studentsNumber++;
-		inds.addIndex();
+		indexID.addIndex();
 	}
 }
 
@@ -205,7 +207,7 @@ void binarySearchByIDRecursive(int& key, int left, int right) {
 		cout << "\nСтудент не найден\n";
 		return;
 	}
-	int studentIndex = inds.arr[mid];
+	int studentIndex = indexID.arr[mid];
 
 	if (students[studentIndex].id == key) {
 		students[studentIndex].print();
@@ -240,12 +242,13 @@ int main()
 
 	bool exit = false;
 	int choice = 0;
+	int subchoice = 0;
 
 	while (!exit) {
 		cout<<"Главное меню:\n";
 		cout << "1. Добавить студентов\n";
 		cout << "2. Вывести список студентов\n";
-		cout << "3. Список студентов по возрастанию ID\n";
+		cout << "3. Отсортировать список студентов\n";
 		cout << "4. Поиск студента по ID\n";
 		cin >> choice;
 
@@ -257,7 +260,14 @@ int main()
 			printStudents();
 			break;
 		case 3:
-			inds.printStudents();
+			cout << "1. Сортировать по возрастанию ID\n2. Соритровать по убыванию ФИО\nВведите команду: ";
+			cin >> subchoice;
+			if (subchoice == 1) {
+				indexID.printStudents();
+			}
+			else {
+				indexName.printStudents();
+			}
 			break;
 		case 4:
 			if (studentsNumber == 0) {
@@ -269,16 +279,15 @@ int main()
 			cin >> key;
 			binarySearchByIDRecursive(key, 0, studentsNumber);
 			if (key > -1) {
-				int subchoice = 0;
 				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
-					students[inds.arr[key]].edit();
-					inds.sortByIndex();
+					students[indexID.arr[key]].edit();
+					indexID.sortByIndex();
 				}
 				else {
-					deleteStudent(inds.arr[key]);
-					inds.edit(key);
+					deleteStudent(indexID.arr[key]);
+					indexID.edit(key);
 				}
 			}
 			break;
