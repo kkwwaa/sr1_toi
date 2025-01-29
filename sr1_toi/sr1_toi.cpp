@@ -230,13 +230,51 @@ void binarySearchByIDRecursive(int& key, int left, int right) {
 	}
 }
 
-void deleteStudent(int key) {
-	int i = key;
+int binarySearchByNameIterative(string& key) {
+	int left = 0;
+	int right = studentsNumber;
+	int mid;
+
+	while (left <= right) {
+		mid = (left + right) / 2;
+		int studentIndex = indexName.arr[mid];
+
+		if (students[studentIndex].name == key) {
+			students[studentIndex].print();
+			return mid;
+		}
+		if (students[studentIndex].name > key) {
+			left = mid + 1;
+		}
+		else {
+			right = mid - 1;
+		}
+	}
+	return -1;
+}
+
+void deleteStudent(int& key, int flag) {
+	int keyId = 0;
+	if (flag == 1) {
+		keyId = students[indexName.arr[key]].id;
+		binarySearchByIDRecursive(keyId, 0, studentsNumber);
+	}
+	else {
+		keyId = key;
+		string keyName = students[indexID.arr[key]].name;
+		key = binarySearchByNameIterative(keyName);
+	}
+
+	int i = indexName.arr[key];
 	studentsNumber--;
 	while (i < studentsNumber) {
 		students[i] = students[i+1];
 		i++;
 	}
+
+
+	indexID.deleteIndex(keyId);//добав в струткру студент номер в инд-масс-ах
+	indexName.deleteIndex(key);
 }
 
 
@@ -249,12 +287,14 @@ int main()
 	int choice = 0;
 	int subchoice = 0;
 
+	string keyName;
+
 	while (!exit) {
 		cout<<"Главное меню:\n";
 		cout << "1. Добавить студентов\n";
 		cout << "2. Вывести список студентов\n";
 		cout << "3. Отсортировать список студентов\n";
-		cout << "4. Поиск студента по ID\n";
+		cout << "4. Поиск студента по ID\n5. Поиск студента по ФИО\n";
 		cin >> choice;
 
 		switch (choice) {
@@ -291,12 +331,33 @@ int main()
 					indexID.edit(key);
 				}
 				else {
-					deleteStudent(indexID.arr[key]);
-					indexID.deleteIndex(key);
+					int nameKey = 0;
+					deleteStudent(key, 0);
 				}
 			}
 			break;
 		case 5:
+			if (studentsNumber == 0) {
+				cout << "В списке нет студентов: ";
+				break;
+			}
+			cout << "Введите ФИО студента: ";
+			cin >> keyName;
+			key = binarySearchByNameIterative(keyName);
+			if (key!=-1) {
+				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
+				cin >> subchoice;
+				if (subchoice == 1) {
+					students[indexName.arr[key]].edit();
+					indexName.edit(key);
+				}
+				else {
+					deleteStudent(key,1);
+				}
+			}
+			break;
+
+		case 6:
 			exit = true;
 			break;
 		default:
