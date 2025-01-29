@@ -150,7 +150,7 @@ struct IndexArray {
 		}
 		newArr[i - 1] = arr[key];
 		while (i < size) {
-			newArr[i] = arr[i];
+			newArr[i] = arr[i-1];
 			i++;
 		}
 
@@ -266,7 +266,13 @@ void deleteStudent(int keyId, int keyName) {
 	indexName.deleteIndex(keyName);
 }
 
-
+void editStudent(int keyId, int keyName) {
+	students[indexID.arr[keyId]].edit();//сначала два ключа создаем и передаем их во все ф-ии
+	sortById = true;
+	indexID.edit(keyId);
+	sortById = false;
+	indexName.edit(keyName);
+}
 
 int main()
 {
@@ -296,7 +302,7 @@ int main()
 			printStudents();
 			break;
 		case 3:
-			cout << "1. Сортировать по возрастанию ID\n2. Соритровать по убыванию ФИО\nВведите команду: ";
+			cout << "1. Сортировать по возрастанию ID\n2. Сортировать по убыванию ФИО\nВведите команду: ";
 			cin >> subchoice;
 			if (subchoice == 1) {
 				indexID.printStudents();
@@ -318,8 +324,7 @@ int main()
 				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
-					students[indexID.arr[key]].edit();//сначала два ключа создаем и передаем их во все ф-ии
-					indexID.edit(key);
+					editStudent(key, keyName);
 				}
 				else {
 					deleteStudent(key, keyName);
@@ -340,9 +345,7 @@ int main()
 				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
-					sortById = false;
-					students[indexName.arr[key]].edit();
-					indexName.edit(key);
+					editStudent(key, keyName);
 				}
 				else {
 					deleteStudent(key,keyName);
