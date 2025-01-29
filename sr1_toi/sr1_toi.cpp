@@ -253,19 +253,8 @@ int binarySearchByNameIterative(string& key) {
 	return -1;
 }
 
-void deleteStudent(int& key, int flag) {
-	int keyId = 0;
-	if (flag == 1) {
-		keyId = students[indexName.arr[key]].id;
-		binarySearchByIDRecursive(keyId, 0, studentsNumber);
-	}
-	else {
-		keyId = key;
-		string keyName = students[indexID.arr[key]].name;
-		key = binarySearchByNameIterative(keyName);
-	}
-
-	int i = indexName.arr[key];
+void deleteStudent(int keyId, int keyName) {
+	int i = indexName.arr[keyName];
 	studentsNumber--;
 	while (i < studentsNumber) {
 		students[i] = students[i+1];
@@ -274,7 +263,7 @@ void deleteStudent(int& key, int flag) {
 
 
 	indexID.deleteIndex(keyId);//добав в струткру студент номер в инд-масс-ах
-	indexName.deleteIndex(key);
+	indexName.deleteIndex(keyName);
 }
 
 
@@ -287,7 +276,9 @@ int main()
 	int choice = 0;
 	int subchoice = 0;
 
-	string keyName;
+	string Name;
+	int keyName;
+	int key;
 
 	while (!exit) {
 		cout<<"Главное меню:\n";
@@ -319,20 +310,19 @@ int main()
 				cout << "В списке нет студентов: ";
 				break;
 			}
-			int key;
 			cout << "Введите ID студента: ";
 			cin >> key;
-			binarySearchByIDRecursive(key, 0, studentsNumber);
+			binarySearchByIDRecursive(key, 0, studentsNumber);//key для ид
+			keyName = binarySearchByNameIterative(students[indexID.arr[key]].name);//keyName для ИмяИнекс
 			if (key > -1) {
 				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
-					students[indexID.arr[key]].edit();
+					students[indexID.arr[key]].edit();//сначала два ключа создаем и передаем их во все ф-ии
 					indexID.edit(key);
 				}
 				else {
-					int nameKey = 0;
-					deleteStudent(key, 0);
+					deleteStudent(key, keyName);
 				}
 			}
 			break;
@@ -342,17 +332,20 @@ int main()
 				break;
 			}
 			cout << "Введите ФИО студента: ";
-			cin >> keyName;
-			key = binarySearchByNameIterative(keyName);
-			if (key!=-1) {
+			cin >> Name;
+			keyName = binarySearchByNameIterative(Name);
+			key = students[indexName.arr[keyName]].id;
+			binarySearchByIDRecursive(key, 0, studentsNumber);
+			if (keyName>-1) {
 				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
+					sortById = false;
 					students[indexName.arr[key]].edit();
 					indexName.edit(key);
 				}
 				else {
-					deleteStudent(key,1);
+					deleteStudent(key,keyName);
 				}
 			}
 			break;
