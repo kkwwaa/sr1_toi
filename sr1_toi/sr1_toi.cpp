@@ -4,7 +4,7 @@
 using namespace std;
 
 const int MAX_STUDENTS = 100;
-int studentsNumber = 4;
+int studentsNumber = 5;
 bool sortById = true;
 
 struct Student {
@@ -68,7 +68,8 @@ Student students[MAX_STUDENTS] = {
 	{3,"Ave", 2},
 	{2,"Bib", 3},
 	{1,"Cid", 1},
-	{4,"Azi", 0}
+	{4,"Azi", 0},
+	{7, "Lal", 1}
 };
 
 struct IndexArray {
@@ -123,11 +124,8 @@ struct IndexArray {
 			i++;
 		}
 		while (i < size) {
-			if (arr[i] < arr[key]) newArr[i] = arr[i + 1];
-			else {
-				if (arr[i + 1] < arr[key]) newArr[i] = arr[i + 1];
-				else newArr[i] = arr[i + 1] - 1;
-			}
+			if (arr[i+1] < arr[key]) newArr[i] = arr[i + 1];
+			else  newArr[i] = arr[i + 1] - 1;
 			i++;
 		}
 
@@ -137,21 +135,22 @@ struct IndexArray {
 
 	void edit(int key) {
 		int* newArr = new int[size];
-		int i = 0;
+		int i = 0; int j = 0;
 
-		while (i < size && students[arr[i]] < students[arr[key]] ) {
-			newArr[i] = arr[i];
+		while (i+j<size && students[arr[i+j]] < students[arr[key]]) {
+			newArr[i] = arr[i+j];
 			i++;
+			if (i == key) j = 1;
 		}
+		newArr[i] = arr[key];
 		i++;
-		while (i < size && students[arr[i]] < students[arr[key]]) {
-			newArr[i - 1] = arr[i];
+		if (j != 1 && key!=0)j = -1;
+		else j = 0;
+		///Хз что делать
+		while (i< size) {
+			newArr[i] = arr[i+j];
 			i++;
-		}
-		newArr[i - 1] = arr[key];
-		while (i < size) {
-			newArr[i] = arr[i-1];
-			i++;
+			if (i+j == key) j = 0;
 		}
 
 		delete[] arr;
@@ -203,11 +202,10 @@ void addStudents() {
 }
 
 void binarySearchByIDRecursive(int& key, int left, int right) {
-	int mid = left + right / 2;
+	int mid = (left + right) / 2;
 	if (left>right) {
 		if (students[studentsNumber-1].id == key) {//проверка последнего
 			key = studentsNumber-1;
-			cout << endl << key << endl;
 			return;
 		}
 		key = -1;
@@ -217,9 +215,7 @@ void binarySearchByIDRecursive(int& key, int left, int right) {
 	int studentIndex = indexID.arr[mid];
 
 	if (students[studentIndex].id == key) {
-		students[studentIndex].print();
 		key = mid;
-		cout << endl << key << endl;
 		return;
 	}
 	if (students[studentIndex].id < key) {
@@ -240,7 +236,6 @@ int binarySearchByNameIterative(string& key) {
 		int studentIndex = indexName.arr[mid];
 
 		if (students[studentIndex].name == key) {
-			students[studentIndex].print();
 			return mid;
 		}
 		if (students[studentIndex].name > key) {
@@ -319,16 +314,21 @@ int main()
 			cout << "Введите ID студента: ";
 			cin >> key;
 			binarySearchByIDRecursive(key, 0, studentsNumber);//key для ид
-			keyName = binarySearchByNameIterative(students[indexID.arr[key]].name);//keyName для ИмяИнекс
+			students[indexID.arr[key]].print();
 			if (key > -1) {
-				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
+				keyName = binarySearchByNameIterative(students[indexID.arr[key]].name);//keyName для ИмяИнекс
+				editStudent(key, keyName);
+				indexID.printStudents();
+				cout << endl;
+				indexName.printStudents();
+				/*cout << "1. Редактировать запись\n2. Удалить запись\n3. Назад\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
 					editStudent(key, keyName);
 				}
-				else {
+				else if (subchoice == 2) {
 					deleteStudent(key, keyName);
-				}
+				}*/
 			}
 			break;
 		case 5:
@@ -339,15 +339,16 @@ int main()
 			cout << "Введите ФИО студента: ";
 			cin >> Name;
 			keyName = binarySearchByNameIterative(Name);
+			students[indexName.arr[keyName]].print();
 			key = students[indexName.arr[keyName]].id;
-			binarySearchByIDRecursive(key, 0, studentsNumber);
 			if (keyName>-1) {
-				cout << "1. Редактировать запись\n2. Удалить запись\nВведите команду: ";
+				binarySearchByIDRecursive(key, 0, studentsNumber);
+				cout << "1. Редактировать запись\n2. Удалить запись\n3. Назад\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
 					editStudent(key, keyName);
 				}
-				else {
+				else if (subchoice==2){
 					deleteStudent(key,keyName);
 				}
 			}
