@@ -53,16 +53,6 @@ struct Student {
 			grade = newGrade;
 		}
 	}
-
-	// Оператор сравнения
-	bool operator<(const Student& other) const {
-		if (sortById) {
-			return id < other.id; // Сравнение по id
-		}
-		else {
-			return name > other.name; // Сравнение по name (по убыванию)
-		}
-	}
 };
 Student students[MAX_STUDENTS] = {
 	{3,"Ave", 2},
@@ -127,30 +117,6 @@ struct IndexArray {
 			if (arr[i+1] < arr[key]) newArr[i] = arr[i + 1];
 			else  newArr[i] = arr[i + 1] - 1;
 			i++;
-		}
-
-		delete[] arr;
-		arr = newArr;
-	}
-
-	void edit(int key) {
-		int* newArr = new int[size];
-		int i = 0; int j = 0;
-
-		while (i+j<size && students[arr[i+j]] < students[arr[key]]) {
-			newArr[i] = arr[i+j];
-			i++;
-			if (i == key) j = 1;
-		}
-		newArr[i] = arr[key];
-		i++;
-		if (j != 1 && key!=0)j = -1;
-		else j = 0;
-		///Хз что делать
-		while (i< size) {
-			newArr[i] = arr[i+j];
-			i++;
-			if (i+j == key) j = 0;
 		}
 
 		delete[] arr;
@@ -261,14 +227,6 @@ void deleteStudent(int keyId, int keyName) {
 	indexName.deleteIndex(keyName);
 }
 
-void editStudent(int keyId, int keyName) {
-	students[indexID.arr[keyId]].edit();//сначала два ключа создаем и передаем их во все ф-ии
-	sortById = true;
-	indexID.edit(keyId);
-	sortById = false;
-	indexName.edit(keyName);
-}
-
 int main()
 {
 	setlocale(LC_ALL, "Russian");
@@ -316,19 +274,16 @@ int main()
 			binarySearchByIDRecursive(key, 0, studentsNumber);//key для ид
 			students[indexID.arr[key]].print();
 			if (key > -1) {
-				keyName = binarySearchByNameIterative(students[indexID.arr[key]].name);//keyName для ИмяИнекс
-				editStudent(key, keyName);
-				indexID.printStudents();
-				cout << endl;
-				indexName.printStudents();
-				/*cout << "1. Редактировать запись\n2. Удалить запись\n3. Назад\nВведите команду: ";
+				cout << "1. Редактировать запись\n2. Удалить запись\n3. Назад\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
-					editStudent(key, keyName);
+					students[indexID.arr[key]].edit();
+					indexID.sortByIndex();
 				}
 				else if (subchoice == 2) {
+					keyName = binarySearchByNameIterative(students[indexID.arr[key]].name);//keyName для ИмяИнекс
 					deleteStudent(key, keyName);
-				}*/
+				}
 			}
 			break;
 		case 5:
@@ -342,13 +297,14 @@ int main()
 			students[indexName.arr[keyName]].print();
 			key = students[indexName.arr[keyName]].id;
 			if (keyName>-1) {
-				binarySearchByIDRecursive(key, 0, studentsNumber);
 				cout << "1. Редактировать запись\n2. Удалить запись\n3. Назад\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
-					editStudent(key, keyName);
+					students[indexID.arr[key]].edit();
+					indexName.sortByIndex();
 				}
 				else if (subchoice==2){
+					binarySearchByIDRecursive(key, 0, studentsNumber);
 					deleteStudent(key,keyName);
 				}
 			}
@@ -361,9 +317,5 @@ int main()
 			cout << "Неправильный ввод. Попробуйте еще)\n";
 			break;
 		}
-	}
-	
-	//Бин поиск для нэйм, ред-ие и удал-ие
-
-	
+	}	
 }
