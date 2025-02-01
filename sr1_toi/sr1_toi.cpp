@@ -4,62 +4,129 @@
 using namespace std;
 
 const int MAX_STUDENTS = 100;
-int studentsNumber = 5;
+int studentsNumber = 10;
 bool sortById = true;
+
+string normalize(const string& str) {
+	string result = "";
+	for (size_t i = 0; i < str.length(); i++) {
+		char ch = str[i];
+
+		// Приводим к нижнему регистру вручную
+		if (ch >= 'А' && ch <= 'Я') {
+			ch = ch + ('a' - 'A');
+		}
+
+		// Пропускаем пробелы
+		if (ch != ' ') {
+			result += ch;
+		}
+	}
+	return result;
+}
 
 struct Student {
 	int id;
-	string name;
-	int grade;
+	string name;  // ФИО в одной строке
+	string submissionDate;
+	string reviewDate;
+	int gradeReport;
+	int gradeDefense;
+	string reviewer;
+	string seminarist;
 
 	void input() {
 		cout << "Введите ID студента: ";
 		cin >> id;
-
+		cin.ignore();  // Игнорируем \n перед getline
 		cout << "Введите ФИО: ";
-		cin >> name;
-
-		cout << "Введите оценку: ";
-		cin >> grade;
+		getline(cin, name);
+		cout << "Введите дату сдачи (ДД.ММ.ГГГГ): ";
+		cin >> submissionDate;
+		cout << "Введите дату проверки (ДД.ММ.ГГГГ): ";
+		cin >> reviewDate;
+		cout << "Введите оценку за отчет: ";
+		cin >> gradeReport;
+		cout << "Введите оценку за защиту: ";
+		cin >> gradeDefense;
+		cin.ignore();
+		cout << "Введите фамилию проверяющего: ";
+		getline(cin, reviewer);
+		cout << "Введите фамилию семинариста: ";
+		getline(cin, seminarist);
 	}
+
 
 	void print() {
-		cout << "ID: " << id
-			<< " Name: " << name
-			<< " Grade: " << grade << endl;
+		cout << "ID: " << id << ", ФИО: " << name
+			<< ", Дата сдачи: " << submissionDate
+			<< ", Дата проверки: " << reviewDate
+			<< ", Оценка за отчет: " << gradeReport
+			<< ", Оценка за защиту: " << gradeDefense
+			<< ", Проверяющий: " << reviewer
+			<< ", Семинарист: " << seminarist << endl;
 	}
 
+
 	void edit() {
-		string newName;
-		int newGrade;
-		int newId;
+		string newName, newSubmissionDate, newReviewDate, newReviewer, newSeminarist;
+		int newId, newGradeReport, newGradeDefense;
 
-		cout << "Введите ID студента (или -1, чтобы оставить): ";
+		cout << "Введите новый ID (или -1, чтобы оставить): ";
 		cin >> newId;
-		if (newId != -1) {
-			id = newId;
-		}
+		if (newId != -1) id = newId;
 
-		cout << "Введите ФИО (или enter, чтобы оставить): ";
 		cin.ignore();
+		cout << "Введите новое ФИО (или enter, чтобы оставить): ";
 		getline(cin, newName);
-		if (!newName.empty()) {
-			name = newName;
-		}
+		if (!newName.empty()) name = newName;
 
-		cout << "Введите оценку (или -1, чтобы оставить): ";
-		cin >> newGrade;
-		if (newGrade != -1) {
-			grade = newGrade;
+		cout << "Введите новую дату сдачи (или enter, чтобы оставить): ";
+		getline(cin, newSubmissionDate);
+		if (!newSubmissionDate.empty()) submissionDate = newSubmissionDate;
+
+		cout << "Введите новую дату проверки (или enter, чтобы оставить): ";
+		getline(cin, newReviewDate);
+		if (!newReviewDate.empty()) reviewDate = newReviewDate;
+
+		cout << "Введите новую оценку за отчет (или -1, чтобы оставить): ";
+		cin >> newGradeReport;
+		if (newGradeReport != -1) gradeReport = newGradeReport;
+
+		cout << "Введите новую оценку за защиту (или -1, чтобы оставить): ";
+		cin >> newGradeDefense;
+		if (newGradeDefense != -1) gradeDefense = newGradeDefense;
+
+		cin.ignore();
+		cout << "Введите новую фамилию проверяющего (или enter, чтобы оставить): ";
+		getline(cin, newReviewer);
+		if (!newReviewer.empty()) reviewer = newReviewer;
+
+		cout << "Введите новую фамилию семинариста (или enter, чтобы оставить): ";
+		getline(cin, newSeminarist);
+		if (!newSeminarist.empty()) seminarist = newSeminarist;
+	}
+
+	bool operator<(const Student& other) const {
+		if (sortById) {
+			return id < other.id; // Сравнение по id
+		}
+		else {
+			return name > other.name; // Сравнение по name (по убыванию)
 		}
 	}
 };
 Student students[MAX_STUDENTS] = {
-	{3,"Ave", 2},
-	{2,"Bib", 3},
-	{1,"Cid", 1},
-	{4,"Azi", 0},
-	{7, "Lal", 1}
+	{3, "Борисова Екатерина Андреевна", "27.11.2024", "03.12.2024", 6, 9, "Долныкова", "Будин"},
+	{5, "Дуров Павел Валерьевич", "01.12.2024", "10.12.2024", 4, 6, "Долныкова", "Цидвинцев"},
+	{9, "Косвинцев Богдан Павлович", "01.12.2024", "10.12.2024", 6, 8, "Осока", "Цидвинцев"},
+	{10, "Никитин Никита Никитич", "01.12.2024", "10.12.2024", 0, 0, "Долныкова", "Будин"},
+	{1, "Петров Арсений Николаевич", "25.11.2024", "30.11.2024", 7, 9, "Долныкова", "Цидвинцев"},
+	{8, "Понькина Татьяна Евгеньевна", "25.11.2024", "05.12.2024", 8, 8, "Осока", "Цидвинцев"},
+	{2, "Семенов Евгений Александрович", "25.11.2024", "30.11.2024", 5, 8, "Долныкова", "Будин"},
+	{6, "Симонов Антон Владимирович", "25.11.2024", "01.12.2024", 8, 8, "Осока", "Цидвинцев"},
+	{4, "Юрьева София Юрьевна", "28.11.2024", "03.12.2024", 2, 9, "Долныкова", "Цидвинцев"},
+	{7, "Янина Анна Владимировна", "25.11.2024", "01.12.2024", 7, 7, "Осока", "Цидвинцев"}
 };
 
 struct IndexArray {
@@ -192,19 +259,23 @@ void binarySearchByIDRecursive(int& key, int left, int right) {
 	}
 }
 
-int binarySearchByNameIterative(string& key) {
+int binarySearchByNameIterative(string key) {
+	key = normalize(key); // Приводим ключ к нормальному виду
+
 	int left = 0;
-	int right = studentsNumber;
+	int right = studentsNumber - 1;
 	int mid;
 
 	while (left <= right) {
 		mid = (left + right) / 2;
 		int studentIndex = indexName.arr[mid];
 
-		if (students[studentIndex].name == key) {
+		string studentName = normalize(students[studentIndex].name); // Приводим имя к нормальному виду
+
+		if (studentName == key) {
 			return mid;
 		}
-		if (students[studentIndex].name > key) {
+		if (studentName > key) {
 			left = mid + 1;
 		}
 		else {
@@ -292,7 +363,8 @@ int main()
 				break;
 			}
 			cout << "Введите ФИО студента: ";
-			cin >> Name;
+			cin.ignore();
+			getline(cin, Name);
 			keyName = binarySearchByNameIterative(Name);
 			students[indexName.arr[keyName]].print();
 			key = students[indexName.arr[keyName]].id;
