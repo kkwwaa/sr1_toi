@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <Windows.h>
 
 using namespace std;
 
@@ -112,7 +113,7 @@ struct Student {
 			return id < other.id; // Сравнение по id
 		}
 		else {
-			return name > other.name; // Сравнение по name (по убыванию)
+			return normalize(name) > normalize(other.name); // Сравнение по name (по убыванию)
 		}
 	}
 };
@@ -143,16 +144,7 @@ struct IndexArray {
 		sortById = !sortById;//для создания индФИО
 	}
 
-	void print() {
-		for (int i = 0; i < size; i++)
-			cout << arr[i] << ' ';
-	}
-
 	void addIndex() {
-
-		/*cout << endl;
-		for (int i = 0; i < size; i++) cout << arr[i] << ' ';*/
-
 		int* newArr = new int[size+1];
 		int i = 0;
 		while (i < size && students[arr[i]] < students[size]) {
@@ -301,6 +293,8 @@ void deleteStudent(int keyId, int keyName) {
 int main()
 {
 	setlocale(LC_ALL, "Russian");
+	SetConsoleOutputCP(1251);
+	SetConsoleCP(1251);
 
 	bool exit = false;
 	int choice = 0;
@@ -315,7 +309,7 @@ int main()
 		cout << "1. Добавить студентов\n";
 		cout << "2. Вывести список студентов\n";
 		cout << "3. Отсортировать список студентов\n";
-		cout << "4. Поиск студента по ID\n5. Поиск студента по ФИО\n";
+		cout << "4. Поиск студента по ID\n5. Поиск студента по ФИО\n6. Выход\nВведите команду: ";
 		cin >> choice;
 
 		switch (choice) {
@@ -343,13 +337,17 @@ int main()
 			cout << "Введите ID студента: ";
 			cin >> key;
 			binarySearchByIDRecursive(key, 0, studentsNumber);//key для ид
-			students[indexID.arr[key]].print();
+			
 			if (key > -1) {
+				students[indexID.arr[key]].print();
 				cout << "1. Редактировать запись\n2. Удалить запись\n3. Назад\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
 					students[indexID.arr[key]].edit();
+					sortById = true;
 					indexID.sortByIndex();
+					sortById = false;
+					indexName.sortByIndex();
 				}
 				else if (subchoice == 2) {
 					keyName = binarySearchByNameIterative(students[indexID.arr[key]].name);//keyName для ИмяИнекс
@@ -366,14 +364,16 @@ int main()
 			cin.ignore();
 			getline(cin, Name);
 			keyName = binarySearchByNameIterative(Name);
-			students[indexName.arr[keyName]].print();
-			key = students[indexName.arr[keyName]].id;
 			if (keyName>-1) {
+				students[indexName.arr[keyName]].print();
 				cout << "1. Редактировать запись\n2. Удалить запись\n3. Назад\nВведите команду: ";
 				cin >> subchoice;
 				if (subchoice == 1) {
-					students[indexID.arr[key]].edit();
+					students[indexName.arr[keyName]].edit();
+					sortById = false;
 					indexName.sortByIndex();
+					sortById = true;
+					indexID.sortByIndex();
 				}
 				else if (subchoice==2){
 					binarySearchByIDRecursive(key, 0, studentsNumber);
